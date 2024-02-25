@@ -1,10 +1,14 @@
 package com.mycompany.annuaire_telephonique;
 
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import javax.swing.JFrame;
+import raven.table.AjoutEtudiant;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 /**
  *
  * @author HP
@@ -54,10 +58,11 @@ public class RechercheEtudiant extends javax.swing.JPanel {
 
         jPanel1.setBackground(new java.awt.Color(216, 216, 216));
 
-        jPanel2.setBackground(new java.awt.Color(0, 153, 0));
+        jPanel2.setBackground(new java.awt.Color(0, 0, 0));
 
         jLabel1.setBackground(new java.awt.Color(0, 153, 0));
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 2, 36)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Rechercher un Etudiant");
         jLabel1.setToolTipText("");
@@ -94,8 +99,9 @@ public class RechercheEtudiant extends javax.swing.JPanel {
 
         jTextField2.setText("jTextField1");
 
-        jButton4.setBackground(new java.awt.Color(222, 222, 222));
+        jButton4.setBackground(new java.awt.Color(0, 153, 0));
         jButton4.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Menu principal");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -232,4 +238,19 @@ public class RechercheEtudiant extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+public static void main(String args[]) {
+        FlatLaf.registerCustomDefaultsSource("raven.table");
+        FlatMacDarkLaf.setup();
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                JFrame frame = new JFrame("RechercheEtudiant"); // Create a JFrame
+                RechercheEtudiant RechercheEtudiant = new RechercheEtudiant(); // Create your panel
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Ensure the application exits when the window is closed
+                frame.add(RechercheEtudiant); // Add your panel to the JFrame
+                frame.pack(); // Adjust the window size to fit the content
+                frame.setLocationRelativeTo(null); // Center the window on the screen
+                frame.setVisible(true); // Make the window visible
+            }
+        });
+    }
 }

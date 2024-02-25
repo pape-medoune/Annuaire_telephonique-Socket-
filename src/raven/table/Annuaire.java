@@ -1,4 +1,10 @@
-package com.mycompany.annuaire_telephonique;
+package raven.table;
+
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -15,9 +21,28 @@ public class Annuaire extends javax.swing.JPanel {
      * Creates new form Annuaire
      */
     public Annuaire() {
-        initComponents();
+        initComponents(); 
+        table.setDefaultRenderer(Object.class, new TableGradientCell());
+        jPanel1.putClientProperty(FlatClientProperties.STYLE, ""
+                + "border:1,1,1,1,$TableHeader.bottomSeparatorColor,,10");
+        table.getTableHeader().putClientProperty(FlatClientProperties.STYLE, ""
+                + "hoverBackground:null;"
+                + "pressedBackground:null;"
+                + "separatorColor:$TableHeader.background");
+        scroll.putClientProperty(FlatClientProperties.STYLE, ""
+                + "border:3,0,3,0,$Table.background,10,10");
+        scroll.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE, ""
+                + "hoverTrackColor:null");
+        testData();
     }
-
+ 
+    private void testData(){
+        DefaultTableModel model=(DefaultTableModel)table.getModel();
+        
+        model.addRow(new Object[]{"Fall", "Mouhamedoune", "+221 779509892", "Mouhamedounedev@gmail.com", "01/01/2001"});
+        model.addRow(new Object[]{"Cisse", "Issakha", "+221 771234567", "cisse410@gmail.com", "01/01/2001"});
+       
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -40,10 +65,11 @@ public class Annuaire extends javax.swing.JPanel {
 
         jPanel1.setBackground(new java.awt.Color(216, 216, 217));
 
-        jPanel2.setBackground(new java.awt.Color(0, 153, 0));
+        jPanel2.setBackground(new java.awt.Color(0, 0, 0));
 
-        jLabel1.setBackground(new java.awt.Color(0, 153, 0));
+        jLabel1.setBackground(new java.awt.Color(0, 51, 51));
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 2, 36)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("ANNUAIRE TELEPHONIQUE");
         jLabel1.setToolTipText("");
@@ -54,7 +80,7 @@ public class Annuaire extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -85,7 +111,7 @@ public class Annuaire extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No", "Name", "Email", "Address", "Position"
+                "Nom", "Prenom", "Telephone", "Mail", "Date de naissance"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -105,15 +131,15 @@ public class Annuaire extends javax.swing.JPanel {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 798, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 798, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,9 +149,12 @@ public class Annuaire extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(317, Short.MAX_VALUE))
+                .addContainerGap(741, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -157,4 +186,19 @@ public class Annuaire extends javax.swing.JPanel {
     private javax.swing.JScrollPane scroll;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
+public static void main(String args[]) {
+        FlatLaf.registerCustomDefaultsSource("raven.table");
+        FlatMacDarkLaf.setup();
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                JFrame frame = new JFrame("Annuaire telephonique"); // Create a JFrame
+                Annuaire Annuaire = new Annuaire(); // Create your panel
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Ensure the application exits when the window is closed
+                frame.add(Annuaire); // Add your panel to the JFrame
+                frame.pack(); // Adjust the window size to fit the content
+                frame.setLocationRelativeTo(null); // Center the window on the screen
+                frame.setVisible(true); // Make the window visible
+            }
+        });
+}
 }
