@@ -4,13 +4,13 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 /**
  *
  * @author HP
@@ -21,7 +21,7 @@ public class Annuaire extends javax.swing.JPanel {
      * Creates new form Annuaire
      */
     public Annuaire() {
-        initComponents(); 
+        initComponents();
         table.setDefaultRenderer(Object.class, new TableGradientCell());
         jPanel1.putClientProperty(FlatClientProperties.STYLE, ""
                 + "border:1,1,1,1,$TableHeader.bottomSeparatorColor,,10");
@@ -35,14 +35,15 @@ public class Annuaire extends javax.swing.JPanel {
                 + "hoverTrackColor:null");
         testData();
     }
- 
-    private void testData(){
-        DefaultTableModel model=(DefaultTableModel)table.getModel();
-        
+
+    private void testData() {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
         model.addRow(new Object[]{"Fall", "Mouhamedoune", "+221 779509892", "Mouhamedounedev@gmail.com", "01/01/2001"});
         model.addRow(new Object[]{"Cisse", "Issakha", "+221 771234567", "cisse410@gmail.com", "01/01/2001"});
-       
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -105,6 +106,11 @@ public class Annuaire extends javax.swing.JPanel {
         jButton4.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Rechercher");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -173,7 +179,30 @@ public class Annuaire extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Assuming 'this' refers to the Annuaire panel
+
+        // Close the top-level container
+        if (frame != null) {
+            frame.dispose();
+        }
+
+        // Create a new JFrame for AjoutEtudiant
+        JFrame ajoutEtudiantFrame = new JFrame("AjoutEtudiant");
+
+        // Create AjoutEtudiant panel
+        AjoutEtudiant ajoutEtudiantPanel = new AjoutEtudiant();
+
+        // Set up the new JFrame
+        ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ajoutEtudiantFrame.add(ajoutEtudiantPanel);
+        ajoutEtudiantFrame.pack();
+        ajoutEtudiantFrame.setLocationRelativeTo(null);
+        ajoutEtudiantFrame.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -200,5 +229,5 @@ public static void main(String args[]) {
                 frame.setVisible(true); // Make the window visible
             }
         });
-}
+    }
 }
