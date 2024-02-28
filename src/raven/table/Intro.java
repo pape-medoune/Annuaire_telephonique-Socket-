@@ -88,10 +88,10 @@ public class Intro extends javax.swing.JPanel {
             }
 
             // Create a new JFrame for AjoutEtudiant
-            JFrame AnnuaireFrame = new JFrame("Annuaire");
+            JFrame AnnuaireFrame = new JFrame("AnnuaireTelephonique");
 
             // Create AjoutEtudiant panel
-            Annuaire AnnuairePanel = new Annuaire();
+            AnnuaireTelephonique AnnuairePanel = new AnnuaireTelephonique();
 
             // Set up the new JFrame
             AnnuaireFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

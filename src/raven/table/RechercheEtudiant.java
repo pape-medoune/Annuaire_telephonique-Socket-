@@ -2,8 +2,16 @@ package com.mycompany.annuaire_telephonique;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import javax.swing.JFrame;
-import raven.table.AjoutEtudiant;
+import javax.swing.JOptionPane;
+import java.io.InputStreamReader;
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
+
+import raven.table.AnnuaireTelephonique;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -16,10 +24,15 @@ import raven.table.AjoutEtudiant;
 public class RechercheEtudiant extends javax.swing.JPanel {
 
     /**
-     * Creates new form AjoutEtudiant
+     * Creates new form AnnuaireTelephonique
      */
     public RechercheEtudiant() {
         initComponents();
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
     }
 
     /**
@@ -87,7 +100,6 @@ public class RechercheEtudiant extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setText("Nom");
 
-        jTextField1.setText("jTextField1");
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
@@ -96,8 +108,6 @@ public class RechercheEtudiant extends javax.swing.JPanel {
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setText("Prenom");
-
-        jTextField2.setText("jTextField1");
 
         jButton4.setBackground(new java.awt.Color(0, 153, 0));
         jButton4.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
@@ -220,6 +230,35 @@ public class RechercheEtudiant extends javax.swing.JPanel {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        String nom = jTextField1.getText();
+        String prenom = jTextField2.getText();
+
+        SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                String message = String.format("RECHERCHER_ETUDIANT;%s;%s", prenom, nom);
+                try (Socket socket = new Socket("localhost", 8080); PrintWriter out = new PrintWriter(socket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+                    out.println(message);
+                    return in.readLine();
+                } catch (Exception e) {
+                    return "Erreur de connexion : " + e.getMessage();
+                }
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    String response = get();
+                    JOptionPane.showMessageDialog(RechercheEtudiant.this, response, "Résultat de la recherche", JOptionPane.INFORMATION_MESSAGE);
+                } catch (InterruptedException | ExecutionException e) {
+                    JOptionPane.showMessageDialog(RechercheEtudiant.this, "Erreur lors de la récupération des résultats : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+
+        worker.execute();
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
 

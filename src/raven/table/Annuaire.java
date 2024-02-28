@@ -3,8 +3,13 @@ package raven.table;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.io.InputStreamReader;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -19,7 +24,12 @@ public class Annuaire extends javax.swing.JPanel {
 
     /**
      * Creates new form Annuaire
+     * @return 
      */
+    public DefaultTableModel getTableModel() {
+        return (DefaultTableModel) table.getModel();
+    }
+
     public Annuaire() {
         initComponents();
         table.setDefaultRenderer(Object.class, new TableGradientCell());
@@ -33,7 +43,13 @@ public class Annuaire extends javax.swing.JPanel {
                 + "border:3,0,3,0,$Table.background,10,10");
         scroll.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE, ""
                 + "hoverTrackColor:null");
-        testData();
+        //testData();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                chargerEtudiants();
+            }
+        });
     }
 
     private void testData() {
@@ -186,11 +202,11 @@ public class Annuaire extends javax.swing.JPanel {
             frame.dispose();
         }
 
-        // Create a new JFrame for AjoutEtudiant
+        // Create a new JFrame for AnnuaireTelephonique
         JFrame ajoutEtudiantFrame = new JFrame("AjoutEtudiant");
 
-        // Create AjoutEtudiant panel
-        AjoutEtudiant ajoutEtudiantPanel = new AjoutEtudiant();
+        // Create AnnuaireTelephonique panel
+        AnnuaireTelephonique ajoutEtudiantPanel = new AnnuaireTelephonique();
 
         // Set up the new JFrame
         ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -199,6 +215,40 @@ public class Annuaire extends javax.swing.JPanel {
         ajoutEtudiantFrame.setLocationRelativeTo(null);
         ajoutEtudiantFrame.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    void chargerEtudiants() {
+        try {
+            Socket socket = new Socket("localhost", 8080);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println("RECUPERER_TOUS_ETUDIANTS");
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String response = in.readLine();
+            socket.close();
+
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0); // Vider la table
+
+            String[] etudiants = response.split(";");
+            if (etudiants.length == 0) {
+                JOptionPane.showMessageDialog(this, "Aucun étudiant trouvé.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            for (String etudiant : etudiants) {
+                String[] details = etudiant.split(",");
+                if (details.length >= 5) {
+                    model.addRow(new Object[]{details[0], details[1], details[2], details[3], details[4]});
+                }
+            }
+
+            // Mettre à jour l'interface utilisateur
+            table.revalidate();
+            table.repaint();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Une exception s'est produite : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
