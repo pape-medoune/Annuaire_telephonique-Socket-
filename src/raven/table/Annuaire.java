@@ -3,7 +3,15 @@ package raven.table;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.mycompany.annuaire_telephonique.RechercheEtudiant;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -36,12 +44,46 @@ public class Annuaire extends javax.swing.JPanel {
         testData();
     }
  
+    public List<Etudiant> getEtudiants() {
+        List<Etudiant> etudiants = new ArrayList<>();
+        try {
+            String URL = "jdbc:mysql://localhost:3306/revision";
+            String USER = "root";
+            String PASSWORD = "";
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            String sql = "SELECT * FROM etudiants";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultat = statement.executeQuery();
+            while (resultat.next()) {
+            String nom = resultat.getString("nom");
+            String prenom = resultat.getString("prenom");
+            String email = resultat.getString("email");
+            String telephone = resultat.getString("telephone");
+            String dateNaissance = resultat.getString("date_de_naissance");
+            etudiants.add(new Etudiant(nom, prenom, telephone, email, dateNaissance));
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return etudiants;
+    }
+    
+
+    
     private void testData(){
         DefaultTableModel model=(DefaultTableModel)table.getModel();
-        
-        model.addRow(new Object[]{"Fall", "Mouhamedoune", "+221 779509892", "Mouhamedounedev@gmail.com", "01/01/2001"});
-        model.addRow(new Object[]{"Cisse", "Issakha", "+221 771234567", "cisse410@gmail.com", "01/01/2001"});
-       
+//        DefaultTableModel model = new DefaultTableModel(new Object[]{"Nom", "Prénom", "Email", "Date de Naissance"},  0);
+        List<Etudiant> etudiants = getEtudiants();
+        for (Etudiant etudiant : etudiants) {
+            model.addRow(new Object[]{etudiant.getNom(), etudiant.getPrenom(), etudiant.getTelephone(), etudiant.getMail(), etudiant.getDateNaissance()});
+        }
+//        List<Etudiant> etudiants = getEtudiants();
+//        for (Etudiant etudiant : etudiants) {
+//            model.addRow(new Object[]{etudiant.getNom(), etudiant.getPrenom(), etudiant.getEmail(), etudiant.getDateNaissance()});
+//        }
+//        JTable table = new JTable(model);
+
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -105,6 +147,11 @@ public class Annuaire extends javax.swing.JPanel {
         jButton4.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Rechercher");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -173,7 +220,53 @@ public class Annuaire extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Assuming 'this' refers to the Annuaire panel
+
+        // Close the top-level container
+        if (frame != null) {
+            frame.dispose();
+        }
+
+        // Create a new JFrame for AjoutEtudiant
+        JFrame ajoutEtudiantFrame = new JFrame("Ajouter Etudiant | JOKKO");
+
+        // Create AjoutEtudiant panel
+        AjoutEtudiant ajoutEtudiantPanel = new AjoutEtudiant();
+
+        // Set up the new JFrame
+        ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ajoutEtudiantFrame.add(ajoutEtudiantPanel);
+        ajoutEtudiantFrame.pack();
+        ajoutEtudiantFrame.setLocationRelativeTo(null);
+        ajoutEtudiantFrame.setVisible(true);
+        AjoutEtudiant ajoutEtudiant = new AjoutEtudiant();
+        ajoutEtudiant.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Assuming 'this' refers to the Annuaire panel
+
+        // Close the top-level container
+        if (frame != null) {
+            frame.dispose();
+        }
+
+        // Create a new JFrame for AjoutEtudiant
+        JFrame ajoutEtudiantFrame = new JFrame("Rechcercher | JOKKO");
+
+        // Create AjoutEtudiant panel
+        RechercheEtudiant rechercheEtudiant = new RechercheEtudiant();
+
+        // Set up the new JFrame
+        ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ajoutEtudiantFrame.add(rechercheEtudiant);
+        ajoutEtudiantFrame.pack();
+        ajoutEtudiantFrame.setLocationRelativeTo(null);
+        ajoutEtudiantFrame.setVisible(true);
+        AjoutEtudiant ajoutEtudiant = new AjoutEtudiant();
+        ajoutEtudiant.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -191,7 +284,7 @@ public static void main(String args[]) {
         FlatMacDarkLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JFrame frame = new JFrame("Annuaire telephonique"); // Create a JFrame
+                JFrame frame = new JFrame("Accueil | JOKKO"); // Create a JFrame
                 Annuaire Annuaire = new Annuaire(); // Create your panel
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Ensure the application exits when the window is closed
                 frame.add(Annuaire); // Add your panel to the JFrame

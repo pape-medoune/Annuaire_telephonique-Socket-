@@ -2,8 +2,21 @@ package com.mycompany.annuaire_telephonique;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 import raven.table.AjoutEtudiant;
+import raven.table.Annuaire;
+import raven.table.Etudiant;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -15,13 +28,43 @@ import raven.table.AjoutEtudiant;
  */
 public class RechercheEtudiant extends javax.swing.JPanel {
 
+    
     /**
      * Creates new form AjoutEtudiant
      */
     public RechercheEtudiant() {
         initComponents();
     }
-
+    
+    public List<Etudiant> getEtudiantsByNomPrenom(String nom, String prenom) {
+        List<Etudiant> etudiants = new ArrayList<>();
+        try {
+            String URL = "jdbc:mysql://localhost:3306/revision";
+            String USER = "root";
+            String PASSWORD = "";
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            String sql = "SELECT * FROM etudiants WHERE nom = ? AND prenom = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, nom);
+            statement.setString(2, prenom);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String email = resultSet.getString("email");
+                String telephone = resultSet.getString("telephone");
+                String dateNaissance = resultSet.getString("date_de_naissance");
+                JOptionPane.showMessageDialog(null, "Voici les informations de "+prenom+" "+nom+"\nEmail: "+ email+"\nTelephone: "+telephone+"\nDate de naissance: "+dateNaissance);
+            }
+            
+            else {
+                JOptionPane.showMessageDialog(null, "Etudiant introuvable!\nVérifiez les informations saisies");
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return etudiants;
+    }
+ 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,11 +80,11 @@ public class RechercheEtudiant extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        nomField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        prenomField = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        searchBtn = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
 
@@ -87,17 +130,20 @@ public class RechercheEtudiant extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setText("Nom");
 
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        nomField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                nomFieldActionPerformed(evt);
             }
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setText("Prenom");
 
-        jTextField2.setText("jTextField1");
+        prenomField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prenomFieldActionPerformed(evt);
+            }
+        });
 
         jButton4.setBackground(new java.awt.Color(0, 153, 0));
         jButton4.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
@@ -109,13 +155,13 @@ public class RechercheEtudiant extends javax.swing.JPanel {
             }
         });
 
-        jButton5.setBackground(new java.awt.Color(0, 153, 255));
-        jButton5.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("Rechercher l'Etudiant");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        searchBtn.setBackground(new java.awt.Color(0, 153, 255));
+        searchBtn.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
+        searchBtn.setForeground(new java.awt.Color(255, 255, 255));
+        searchBtn.setText("Rechercher l'Etudiant");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                searchBtnActionPerformed(evt);
             }
         });
 
@@ -144,13 +190,13 @@ public class RechercheEtudiant extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nomField, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(prenomField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -171,15 +217,15 @@ public class RechercheEtudiant extends javax.swing.JPanel {
                         .addGap(18, 18, 18)))
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nomField, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(prenomField, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(140, 140, 140))
         );
 
@@ -210,22 +256,64 @@ public class RechercheEtudiant extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void nomFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_nomFieldActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Assuming 'this' refers to the Annuaire panel
+
+        // Close the top-level container
+        if (frame != null) {
+            frame.dispose();
+        }
+
+        // Create a new JFrame for AjoutEtudiant
+        JFrame ajoutEtudiantFrame = new JFrame("Accueil | JOKKO");
+
+        // Create AjoutEtudiant panel
+        Annuaire annuaire = new Annuaire();
+
+        // Set up the new JFrame
+        ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ajoutEtudiantFrame.add(annuaire);
+        ajoutEtudiantFrame.pack();
+        ajoutEtudiantFrame.setLocationRelativeTo(null);
+        ajoutEtudiantFrame.setVisible(true);
+        AjoutEtudiant ajoutEtudiant = new AjoutEtudiant();
+        ajoutEtudiant.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        public static DefaultTableModel model = new DefaultTableModel(new Object[]{"Nom", "Prénom", "Email", "Date de Naissance"},   0);
+        public static JTable table = new JTable(model);
+        public static JScrollPane scrollPane = new JScrollPane(table);
+    public void displayEtudiants(List<Etudiant> etudiants) {
+        for (Etudiant etudiant : etudiants) {
+            model.addRow(new Object[]{etudiant.getNom(), etudiant.getPrenom(), etudiant.getMail(), etudiant.getDateNaissance()});
+        }
+//        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+//        JPanel panel = new JPanel();
+//        panel.add(scrollPane);
+//         Ajoutez scrollPane à votre JFrame ou JPanel
+    }
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+        String nom = nomField.getText();
+        String prenom = prenomField.getText();
+        System.out.println("com.mycompany.annuaire_telephonique.RechercheEtudiant.searchBtnActionPerformed()");
+        List<Etudiant> etudiants = getEtudiantsByNomPrenom(nom, prenom);
+        displayEtudiants(etudiants);
+    }//GEN-LAST:event_searchBtnActionPerformed
+
+    private void prenomFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prenomFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prenomFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -235,19 +323,21 @@ public class RechercheEtudiant extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField nomField;
+    private javax.swing.JTextField prenomField;
+    private javax.swing.JButton searchBtn;
     // End of variables declaration//GEN-END:variables
 public static void main(String args[]) {
         FlatLaf.registerCustomDefaultsSource("raven.table");
         FlatMacDarkLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JFrame frame = new JFrame("RechercheEtudiant"); // Create a JFrame
+                JFrame frame = new JFrame("Rechercher Etudiant | JOKKO"); // Create a JFrame
                 RechercheEtudiant RechercheEtudiant = new RechercheEtudiant(); // Create your panel
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Ensure the application exits when the window is closed
                 frame.add(RechercheEtudiant); // Add your panel to the JFrame
-                frame.pack(); // Adjust the window size to fit the content
+                frame.pack();// Adjust the window size to fit the content
+                frame.add(scrollPane);
                 frame.setLocationRelativeTo(null); // Center the window on the screen
                 frame.setVisible(true); // Make the window visible
             }

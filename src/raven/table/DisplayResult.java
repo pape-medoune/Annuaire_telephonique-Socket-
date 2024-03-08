@@ -3,7 +3,17 @@ package raven.table;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.mycompany.annuaire_telephonique.RechercheEtudiant;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -15,12 +25,13 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author HP
  */
-public class Annuaire extends javax.swing.JPanel {
+public class DisplayResult extends javax.swing.JPanel {
 
+    List<Etudiant> etudiants = new ArrayList<>();
     /**
      * Creates new form Annuaire
      */
-    public Annuaire() {
+    public DisplayResult() {
         initComponents(); 
         table.setDefaultRenderer(Object.class, new TableGradientCell());
         jPanel1.putClientProperty(FlatClientProperties.STYLE, ""
@@ -33,15 +44,43 @@ public class Annuaire extends javax.swing.JPanel {
                 + "border:3,0,3,0,$Table.background,10,10");
         scroll.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE, ""
                 + "hoverTrackColor:null");
-        testData();
+        testData(etudiants);
     }
  
-    private void testData(){
-        DefaultTableModel model=(DefaultTableModel)table.getModel();
+    public List<Etudiant> getEtudiantsByNomPrenom(String nom, String prenom) {
         
-        model.addRow(new Object[]{"Fall", "Mouhamedoune", "+221 779509892", "Mouhamedounedev@gmail.com", "01/01/2001"});
-        model.addRow(new Object[]{"Cisse", "Issakha", "+221 771234567", "cisse410@gmail.com", "01/01/2001"});
-       
+        try {
+            String URL = "jdbc:mysql://localhost:3306/revision";
+            String USER = "root";
+            String PASSWORD = "";
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            String sql = "SELECT * FROM etudiants WHERE nom = ? AND prenom = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, nom);
+            statement.setString(2, prenom);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String email = resultSet.getString("email");
+                String telephone = resultSet.getString("telephone");
+                String dateNaissance = resultSet.getString("date_de_naissance");
+                etudiants.add(new Etudiant(nom, prenom, email, telephone, dateNaissance));
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return etudiants;
+    }
+    
+
+    
+    public void testData(List<Etudiant> etudiants){
+        DefaultTableModel model=(DefaultTableModel)table.getModel();
+        for (Etudiant etudiant : etudiants) {
+            model.addRow(new Object[]{etudiant.getNom(), etudiant.getPrenom(), etudiant.getMail(), etudiant.getDateNaissance()});
+        }
+//        JTable table = new JTable(model);
+//        JScrollPane scrollPane = new JScrollPane(table);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -71,7 +110,7 @@ public class Annuaire extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 2, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("ANNUAIRE TELEPHONIQUE");
+        jLabel1.setText("RESULTAT DE LA RECHERCHE");
         jLabel1.setToolTipText("");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -105,6 +144,11 @@ public class Annuaire extends javax.swing.JPanel {
         jButton4.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Rechercher");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -173,7 +217,53 @@ public class Annuaire extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Assuming 'this' refers to the Annuaire panel
+
+        // Close the top-level container
+        if (frame != null) {
+            frame.dispose();
+        }
+
+        // Create a new JFrame for AjoutEtudiant
+        JFrame ajoutEtudiantFrame = new JFrame("Ajouter Etudiant | JOKKO");
+
+        // Create AjoutEtudiant panel
+        AjoutEtudiant ajoutEtudiantPanel = new AjoutEtudiant();
+
+        // Set up the new JFrame
+        ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ajoutEtudiantFrame.add(ajoutEtudiantPanel);
+        ajoutEtudiantFrame.pack();
+        ajoutEtudiantFrame.setLocationRelativeTo(null);
+        ajoutEtudiantFrame.setVisible(true);
+        AjoutEtudiant ajoutEtudiant = new AjoutEtudiant();
+        ajoutEtudiant.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Assuming 'this' refers to the Annuaire panel
+
+        // Close the top-level container
+        if (frame != null) {
+            frame.dispose();
+        }
+
+        // Create a new JFrame for AjoutEtudiant
+        JFrame ajoutEtudiantFrame = new JFrame("Rechcercher | JOKKO");
+
+        // Create AjoutEtudiant panel
+        RechercheEtudiant rechercheEtudiant = new RechercheEtudiant();
+
+        // Set up the new JFrame
+        ajoutEtudiantFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ajoutEtudiantFrame.add(rechercheEtudiant);
+        ajoutEtudiantFrame.pack();
+        ajoutEtudiantFrame.setLocationRelativeTo(null);
+        ajoutEtudiantFrame.setVisible(true);
+        AjoutEtudiant ajoutEtudiant = new AjoutEtudiant();
+        ajoutEtudiant.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -184,15 +274,15 @@ public class Annuaire extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JScrollPane scroll;
-    private javax.swing.JTable table;
+    public javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 public static void main(String args[]) {
         FlatLaf.registerCustomDefaultsSource("raven.table");
         FlatMacDarkLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JFrame frame = new JFrame("Annuaire telephonique"); // Create a JFrame
-                Annuaire Annuaire = new Annuaire(); // Create your panel
+                JFrame frame = new JFrame("Accueil | JOKKO"); // Create a JFrame
+                DisplayResult Annuaire = new DisplayResult(); // Create your panel
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Ensure the application exits when the window is closed
                 frame.add(Annuaire); // Add your panel to the JFrame
                 frame.pack(); // Adjust the window size to fit the content
